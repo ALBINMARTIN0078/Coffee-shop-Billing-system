@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<div class="row justify-content-center">
+
+<div class="col-md-5">
+
+<div class="card shadow">
+
+<div class="card-header bg-dark text-white text-center">
+
+<h4>☕ KL 63 Coffee Shop</h4>
+<p class="mb-0">ERNAKULAM, Kerala</p>
+
+</div>
+
+<div class="card-body">
+
+<div class="row">
+
+<div class="col-6">
+<b>Order ID:</b> {{order.id}}
+</div>
+
+<div class="col-6 text-end">
+<b>Date:</b> {{order.date}}
+</div>
+
+</div>
+
+<div class="row mt-2">
+
+<div class="col-6">
+<b>Table:</b> {{order.table_number}}
+</div>
+
+<div class="col-6 text-end">
+<b>Payment:</b> {{order.payment_method}}
+</div>
+
+</div>
+
+<hr>
+
+<h5>Order Summary</h5>
+
+<table class="table table-sm">
+
+<thead>
+
+<tr>
+<th>Item</th>
+<th>Qty</th>
+<th>Price</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for item in order.orderitem_set.all %}
+<tr>
+<td>{{item.product.name}}</td>
+<td>{{item.quantity}}</td>
+<td>₹{{item.product.price}}</td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<hr>
+
+<div class="d-flex justify-content-between">
+
+<h5>Total</h5>
+
+<h4 class="text-success">₹{{order.total}}</h4>
+
+</div>
+
+<hr>
+
+<p class="text-center text-muted">
+
+Thank you for visiting ☕<br>
+Please come again!
+
+</p>
+
+<div class="text-center">
+
+<button onclick="window.print()" class="btn btn-success">
+
+Print Receipt
+
+</button>
+
+<a href="/" class="btn btn-primary">
+
+New Order
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

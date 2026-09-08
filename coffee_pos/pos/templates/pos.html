@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+<h4>ORDER-PLEASE</h4>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>Table Number</label>
+
+<input type="number" name="table" class="form-control">
+
+<br>
+
+<h4>Menu</h4>
+
+{% for product in products %}
+
+<button type="button" class="btn btn-outline-primary m-1"
+onclick="addItem('{{product.name}}', {{product.price}}, {{product.id}})">
+
+{{product.name}} ₹{{product.price}}
+
+</button>
+
+{% endfor %}
+
+<br><br>
+
+<table class="table" id="cart">
+
+<tr>
+<th>Item</th>
+<th>Price</th>
+<th>Qty</th>
+<th>Action</th>
+</tr>
+
+</table>
+
+<h4>Total ₹ <span id="total">0</span></h4>
+
+<input type="hidden" name="total" id="total_input">
+
+<div id="items_container"></div>
+
+<label>Payment</label>
+
+<select name="payment" class="form-control">
+
+<option>Cash</option>
+<option>UPI</option>
+
+</select>
+
+<br>
+
+<button type="submit" class="btn btn-success">
+
+Generate Bill
+
+</button>
+
+</form>
+
+<script>
+
+let total = 0
+let items = {}
+let rowIndex = 0
+
+function addItem(name, price, productId){
+
+if (items[productId]) {
+  items[productId].quantity += 1
+  document.getElementById('qty_' + productId).innerText = items[productId].quantity
+} else {
+  items[productId] = {name: name, price: price, quantity: 1}
+  
+  let table = document.getElementById("cart")
+  let row = table.insertRow()
+  row.id = 'row_' + productId
+  row.insertCell(0).innerHTML = name
+  row.insertCell(1).innerHTML = price
+  row.insertCell(2).id = 'qty_' + productId
+  row.insertCell(2).innerHTML = 1
+  row.insertCell(3).innerHTML = '<button type="button" class="btn btn-sm btn-danger" onclick="removeItem(' + productId + ')">Remove</button>'
+}
+
+updateTotal()
+updateHiddenInputs()
+}
+
+function removeItem(productId) {
+  delete items[productId]
+  document.getElementById('row_' + productId).remove()
+  updateTotal()
+  updateHiddenInputs()
+}
+
+function updateTotal(){
+  total = 0
+  for (let productId in items) {
+    total += items[productId].price * items[productId].quantity
+  }
+  document.getElementById("total").innerText = total
+  document.getElementById("total_input").value = total
+}
+
+function updateHiddenInputs(){
+  let container = document.getElementById("items_container")
+  container.innerHTML = ''
+  for (let productId in items) {
+    container.innerHTML += '<input type="hidden" name="product_id" value="' + productId + '">'
+    container.innerHTML += '<input type="hidden" name="quantity" value="' + items[productId].quantity + '">'
+  }
+}
+
+</script>
+
+
+{% endblock %}
